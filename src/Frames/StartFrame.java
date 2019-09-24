@@ -31,6 +31,7 @@ public class StartFrame extends JFrame {
 	private NodeList nodeList;
 	private ArrayList<User> usList = new ArrayList<User>();
 	private JTextField   login;
+	int use;
 	private JPasswordField password;
 	private JLabel   labelLogin, labelPassword;
 	private JButton connect,exit,newuser;
@@ -128,12 +129,27 @@ public class StartFrame extends JFrame {
 				if ((usList.get(i).getName().equals(login.getText()) &&(usList.get(i).getpasword().equals(password.getPassword()))));  
 						{
 		Check=true;
+		use=i;
+		
 		
 						}
 			}
 			if(Check==true) {
-				new UserFrame(usList.get(0));
-				dispose();
+				switch((usList.get(use).getUser_class())){
+					case 1:
+						new UserFrame(usList.get(0));
+						dispose();
+					case 2:
+						new MainFrame();
+						dispose();
+					case 3:
+						new AdminFrame();
+						dispose();
+						defalt:
+							new StartFrame();
+						dispose();
+				}
+				
 			}
 		}
 	});
