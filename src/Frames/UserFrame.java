@@ -17,6 +17,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import Book_type.Book;
+import Library.User;
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,88 +27,74 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainFrame extends JFrame {
+public class UserFrame extends JFrame {
 	/**
 	 * 
 	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 	// Модель данных таблицы
-	private DefaultTableModel tableModel;
-	private JTable table1;
+	
+	private DefaultTableModel tableModel,tableModel2;
+	private JTable table1,table12;
 	private NodeList nodeList;
 	private ArrayList<Book> usList = new ArrayList<Book>();
 
 	// Заголовки столбцов
 	private Object[] columnsHeader = new String[] { "id", "тип", "Имя", "кол-во", "жанр/сфера" };
+	private Object[] columnsHeader2 = new String[]  { "id", "Имя","Взятые_книги" };
 
-	public MainFrame() {
+	public UserFrame(User you) {
+		
 		super("Пример использования TableModel");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// Создание стандартной модели
+		
 		tableModel = new DefaultTableModel();
+		tableModel2 = new DefaultTableModel();
 		// Определение столбцов
+		tableModel2.setColumnIdentifiers(columnsHeader2);
 		tableModel.setColumnIdentifiers(columnsHeader);
 		// Наполнение модели данными
+		Object[] array = new String[] { String.valueOf(you.getUser_id()), you.getName(),you.getBook_t_id() };
+		tableModel2.addRow(array);
 		ReadXML();
 		if (nodeList != null) {
 			for (int i = 0; i < nodeList.getLength(); i++) {
-				Object[] array = new String[] { String.valueOf(usList.get(i).getBook_id()),
+				Object[] array1 = new String[] { String.valueOf(usList.get(i).getBook_id()),
 						Class_chenge((usList.get(i).getTipe())), usList.get(i).getName(),
 						String.valueOf(usList.get(i).getCount()), usList.get(i).getGenre() };
-				tableModel.addRow(array);
+				tableModel.addRow(array1);
 			}
 		} else {
-			Object[] array = new String[] { "", "", "" };
-			tableModel.addRow(array);
+			Object[] array1 = new String[] { "", "", "" };
+			tableModel.addRow(array1);
 		}
 		// Создание таблицы на основании модели данных
+		
 		table1 = new JTable(tableModel);
+		table12 = new JTable(tableModel2);
 		// Создание кнопки добавления строки таблицы
-		JButton add = new JButton("Добавить");
-		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Номер выделенной строки
-				int idx = table1.getSelectedRow();
-				// Вставка новой строки после выделенной
-				tableModel.insertRow(idx + 1, new String[] { "" + String.valueOf(table1.getRowCount()), "", "" });
-			}
-		});
-		JButton save = new JButton("Сохранить");
-		save.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				try {
-					WriteXML();
-				} catch (TransformerException | IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+		
+		
 		// Создание кнопки удаления строки таблицы
-		JButton remove = new JButton("Удалить");
-		remove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Номер выделенной строки
-				int idx = table1.getSelectedRow();
-				// Удаление выделенной строки
-				tableModel.removeRow(idx);
-			}
-		});
+		
+		
+
 		// Создание таблицы на основе модели данных
 
 		// Определение высоты строки
 
 		// Формирование интерфейса
 		Box contents = new Box(BoxLayout.Y_AXIS);
+		contents.add(new JScrollPane(table12));
 		contents.add(new JScrollPane(table1));
 
 		getContentPane().add(contents);
 
 		JPanel buttons = new JPanel();
-		buttons.add(add);
-		buttons.add(save);
-		buttons.add(remove);
+	
 		getContentPane().add(buttons, "South");
 		// Вывод окна на экран
 		setSize(400, 300);

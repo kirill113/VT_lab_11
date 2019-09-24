@@ -16,8 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import Book_type.Book;
-
+import Library.User;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -25,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainFrame extends JFrame {
+public class AdminFrame extends JFrame {
 	/**
 	 * 
 	 */
@@ -34,12 +33,12 @@ public class MainFrame extends JFrame {
 	private DefaultTableModel tableModel;
 	private JTable table1;
 	private NodeList nodeList;
-	private ArrayList<Book> usList = new ArrayList<Book>();
+	private ArrayList<User> usList = new ArrayList<User>();
 
 	// Заголовки столбцов
-	private Object[] columnsHeader = new String[] { "id", "тип", "Имя", "кол-во", "жанр/сфера" };
+	private Object[] columnsHeader = new String[] { "id", "Имя","Пароль", "Админ/Библиотекарь","книги" };
 
-	public MainFrame() {
+	public AdminFrame() {
 		super("Пример использования TableModel");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// Создание стандартной модели
@@ -48,16 +47,13 @@ public class MainFrame extends JFrame {
 		tableModel.setColumnIdentifiers(columnsHeader);
 		// Наполнение модели данными
 		ReadXML();
-		if (nodeList != null) {
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Object[] array = new String[] { String.valueOf(usList.get(i).getBook_id()),
-						Class_chenge((usList.get(i).getTipe())), usList.get(i).getName(),
-						String.valueOf(usList.get(i).getCount()), usList.get(i).getGenre() };
-				tableModel.addRow(array);
-			}
-		} else {
-			Object[] array = new String[] { "", "", "" };
+		if(nodeList!=null) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Object[] array = new String[] { String.valueOf(usList.get(i).getUser_id()), usList.get(i).getName(),usList.get(i).getpasword(),Class_chenge((usList.get(i).getUser_class())),usList.get(i).getBook_t_id() };
 			tableModel.addRow(array);
+		}}else {
+			 Object[] array = new String[] {"","" ,""};
+			 tableModel.addRow(array);
 		}
 		// Создание таблицы на основании модели данных
 		table1 = new JTable(tableModel);
@@ -71,10 +67,10 @@ public class MainFrame extends JFrame {
 				tableModel.insertRow(idx + 1, new String[] { "" + String.valueOf(table1.getRowCount()), "", "" });
 			}
 		});
-		JButton save = new JButton("Сохранить");
+		JButton  save= new JButton("Сохранить");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				
 				try {
 					WriteXML();
 				} catch (TransformerException | IOException e1) {
@@ -111,12 +107,10 @@ public class MainFrame extends JFrame {
 		// Вывод окна на экран
 		setSize(400, 300);
 		setVisible(true);
-	}
-
-	DocumentBuilder builder;
+	}DocumentBuilder builder;
 
 	public void ReadXML() {
-		String filepath = "Books.xml";
+		String filepath = "users.xml";
 		File xmlFile = new File(filepath);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
@@ -125,17 +119,16 @@ public class MainFrame extends JFrame {
 			Document doc = builder.parse(xmlFile);
 			doc.getDocumentElement().normalize();
 
-			nodeList = doc.getElementsByTagName("Book");
+			nodeList = doc.getElementsByTagName("user");
 
 			for (int i = 0; i < nodeList.getLength(); i++) {
-				usList.add(getBook(nodeList.item(i)));
+				usList.add(getUser(nodeList.item(i)));
 			}
 
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
 	}
-
 	public void WriteXML() throws TransformerException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -143,50 +136,57 @@ public class MainFrame extends JFrame {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
+		
+	
+		
+		
+			Document doc = builder.newDocument();
+			Element RootElement = doc.createElement("base");
+			for (int i = 0; i < table1.getRowCount(); i++) {
 
-		Document doc = builder.newDocument();
-		Element RootElement = doc.createElement("base");
-		for (int i = 0; i < table1.getRowCount(); i++) {
+				Element RootElement2 = doc.createElement("user");
 
-			Element RootElement2 = doc.createElement("Book");
+				Element NameElementTitle = doc.createElement("name");
+				NameElementTitle.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 1))));
+				RootElement2.appendChild(NameElementTitle);
 
-			Element NameElementTitle = doc.createElement("id");
-			NameElementTitle.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 0))));
-			RootElement2.appendChild(NameElementTitle);
+				Element NameElementCompile = doc.createElement("pasword");
+				NameElementCompile.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 2))));
+				RootElement2.appendChild(NameElementCompile);
 
-			Element NameElementCompile = doc.createElement("tipe");
-			NameElementCompile.appendChild(doc.createTextNode(String.valueOf(R_Class_chenge(String.valueOf(table1.getValueAt(i, 1))))));
-			RootElement2.appendChild(NameElementCompile);
+				Element NameElementCompile1 = doc.createElement("class");
+				NameElementCompile1.appendChild(doc.createTextNode(String.valueOf(R_Class_chenge(String.valueOf(table1.getValueAt(i, 3))))));
+				RootElement2.appendChild(NameElementCompile1);
+				
+				Element NameElementCompile11 = doc.createElement("Book_id");
+				NameElementCompile11.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 4))));
+				RootElement2.appendChild(NameElementCompile11);
 
-			Element NameElementCompile1 = doc.createElement("name");
-			NameElementCompile1.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 2))));
-			RootElement2.appendChild(NameElementCompile1);
 
-			Element NameElementCompile11 = doc.createElement("count");
-			NameElementCompile11.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 3))));
-			RootElement2.appendChild(NameElementCompile11);
+				Element NameElementRuns = doc.createElement("id");
+				NameElementRuns.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 0))));
+				RootElement2.appendChild(NameElementRuns);
+				RootElement.appendChild(RootElement2);
+			}
+			doc.appendChild(RootElement);
 
-			Element NameElementRuns = doc.createElement("genre");
-			NameElementRuns.appendChild(doc.createTextNode(String.valueOf(table1.getValueAt(i, 3))));
-			RootElement2.appendChild(NameElementRuns);
-			RootElement.appendChild(RootElement2);
-		}
-		doc.appendChild(RootElement);
-
-		Transformer t = TransformerFactory.newInstance().newTransformer();
-		t.transform(new DOMSource(doc), new StreamResult(new FileOutputStream("Books.xml")));
-
+			Transformer t = TransformerFactory.newInstance().newTransformer();
+			t.transform(new DOMSource(doc), new StreamResult(new FileOutputStream("users.xml")));
+			
+	
+		
+		
 	}
 
-	private static Book getBook(Node node) {
-		Book us = new Book();
+	private static User getUser(Node node) {
+		User us = new User();
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
-			us.setBook_id(Integer.parseInt(getTagValue("id", element)));
-			us.setTipe(Integer.parseInt(getTagValue("tipe", element)));
 			us.setName(getTagValue("name", element));
-			us.setCount(Integer.parseInt(getTagValue("count", element)));
-			us.setGenre(getTagValue("genre", element));
+			us.setpasword(getTagValue("pasword", element));
+			us.setUser_id(Integer.parseInt(getTagValue("id", element)));
+			us.setUser_class(Integer.parseInt(getTagValue("class", element)));
+			us.setBook_t_id(getTagValue("Book_id", element));
 		}
 
 		return us;
@@ -199,30 +199,28 @@ public class MainFrame extends JFrame {
 	}
 
 	private static String Class_chenge(int clas) {
-		switch (clas) {
-		case 1:
-			return "Учебник";
-		case 2:
-			return "Худ";
-		case 3:
-			return "Пресса";
-		default:
-			return "другое";
+		if (clas == 2) {
+			return "Библиотекарь";
+		} else {
 
+			if (clas == 3) {
+				return "Админ";
+			} else {
+				return "Посетитель";
+			}
 		}
+
 	}
-
 	private static int R_Class_chenge(String clas) {
-		switch (clas) {
-		case "Учебник":
-			return 1;
-		case "Худ":
+		if (clas.equals("Библиотекарь")) {
 			return 2;
-		case "Пресса":
-			return 3;
-		default:
-			return 4;
+		} else {
 
+			if (clas.equals("Админ")) {
+				return 3;
+			} else {
+				return 1;
+			}
 		}
 	}
 
