@@ -1,5 +1,8 @@
 package Book_type;
 
+import java.util.Comparator;
+
+
 
 public class Book {
 	private String name;
@@ -7,6 +10,29 @@ public class Book {
 	private int count;
 	private String genre;
 	private int tipe;
+	 public static Comparator<Book> NameComparator = new Comparator<Book>() {
+		 
+	        @Override
+	        public int compare(Book e1, Book e2) {
+	            return e1.getName().compareTo(e2.getName());
+	        }
+	    };
+	    public static Comparator<Book> IdComparator = new Comparator<Book>() {
+	    	 
+	        @Override
+	        public int compare(Book e1, Book e2) {
+	            return e1.getBook_id() - e2.getBook_id();
+	        }
+	    }; 
+	    
+	    public static Comparator<Book> CountComparator = new Comparator<Book>() {
+	    	 
+	        @Override
+	        public int compare(Book e1, Book e2) {
+	            return e1.getCount() - e2.getCount();
+	        }
+	    }; 
+	   
 	public String getName() {
 		return name;
 	}

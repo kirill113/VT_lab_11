@@ -1,5 +1,7 @@
 package Library;
 
+import java.util.Comparator;
+
 public class User {
 	private String name;
 	private String pasword;
@@ -26,6 +28,27 @@ public class User {
 		this.user_class = user_class;
 		this.book_t_id = book_t_id;		
 	}
+	 public static Comparator<User> NameComparator = new Comparator<User>() {
+		 
+	        @Override
+	        public int compare(User e1, User e2) {
+	            return e1.getName().compareTo(e2.getName());
+	        }
+	    };
+	    public static Comparator<User> IdComparator = new Comparator<User>() {
+	    	 
+	        @Override
+	        public int compare(User e1, User e2) {
+	            return e1.getUser_id() - e2.getUser_id();
+	        }
+	    }; 
+	    public static Comparator<User> ClassComparator = new Comparator<User>() {
+	    	 
+	        @Override
+	        public int compare(User e1, User e2) {
+	            return e1.getUser_class() - e2.getUser_class();
+	        }
+	    };
 	public String getName() {
 		return name;
 	}

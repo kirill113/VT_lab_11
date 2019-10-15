@@ -19,10 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 import Library.User;
-
-
 
 public class StartFrame extends JFrame {
 
@@ -30,12 +27,12 @@ public class StartFrame extends JFrame {
 	private JPanel panel;
 	private NodeList nodeList;
 	private ArrayList<User> usList = new ArrayList<User>();
-	private JTextField   login;
-	int use;
+	private JTextField login;
+	int user1;
 	private JPasswordField password;
-	private JLabel   labelLogin, labelPassword;
-	private JButton connect,exit,newuser;
-	boolean Check=false;
+	private JLabel labelLogin, labelPassword;
+	private JButton connect, exit, newuser;
+	boolean Check = false;
 
 	public StartFrame() {
 		setTitle("StartFrame");
@@ -44,7 +41,7 @@ public class StartFrame extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		initComponents();
-		 ReadXML();
+		ReadXML();
 		action();
 		setVisible(true);
 	}
@@ -52,21 +49,17 @@ public class StartFrame extends JFrame {
 	public void initComponents() {
 		panel = new JPanel();
 
-		
 		login = new JTextField("root", 20);
 
 		password = new JPasswordField("1234", 20);
 
-	
-		
 		labelLogin = new JLabel("login");
 		labelPassword = new JLabel("pass");
 
-	
 		connect = new JButton("Войти");
 		exit = new JButton("Выход");
 		newuser = new JButton("новый");
-	
+
 		panel.add(labelLogin);
 		panel.add(login);
 		panel.add(labelPassword);
@@ -76,9 +69,8 @@ public class StartFrame extends JFrame {
 		panel.add(exit);
 		add(panel);
 
-
-		
 	}
+
 	public void ReadXML() {
 		String filepath = "users.xml";
 		File xmlFile = new File(filepath);
@@ -94,7 +86,6 @@ public class StartFrame extends JFrame {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				usList.add(getUser(nodeList.item(i)));
 			}
-
 
 		} catch (Exception exc) {
 			exc.printStackTrace();
@@ -120,34 +111,43 @@ public class StartFrame extends JFrame {
 		Node node = (Node) nodeList.item(0);
 		return node.getNodeValue();
 	}
+
 	public void action() {
 	connect.addActionListener(new ActionListener() {
 
 	
+		@SuppressWarnings("unused")
 		public void actionPerformed(ActionEvent e) {
 			for (int i = 0; i <nodeList.getLength() ; i++) {
-				if ((usList.get(i).getName().equals(login.getText()) &&(usList.get(i).getpasword().equals(password.getPassword()))));  
+				String pass = new String(password.getPassword());
+				String nam= new String(login.getText());
+				if ((usList.get(i).getName().equals(nam)) &&(usList.get(i).getpasword().equals(pass)));  
 						{
 		Check=true;
-		use=i;
-		
-		
+		 user1=i;
 						}
+						
 			}
 			if(Check==true) {
-				switch((usList.get(use).getUser_class())){
+				switch((usList.get(user1).getUser_class())){
 					case 1:
-						new UserFrame(usList.get(0));
+						new UserFrame(usList.get(user1));
 						dispose();
-					case 2:
+						Check=false;
+						break;
+					case 3:
 						new MainFrame();
 						dispose();
-					case 3:
+						Check=false;
+						break;
+					case 2:
 						new AdminFrame();
 						dispose();
+						Check=false;
 						defalt:
 							new StartFrame();
 						dispose();
+						break;
 				}
 				
 			}
@@ -172,7 +172,5 @@ public class StartFrame extends JFrame {
 		}
 	});
 	}
-	
-	
 
 }

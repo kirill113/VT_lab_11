@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 
 import Book_type.Book;
 
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,6 +36,7 @@ public class MainFrame extends JFrame {
 	private JTable table1;
 	private NodeList nodeList;
 	private ArrayList<Book> usList = new ArrayList<Book>();
+	private int sr=1;
 
 	// Заголовки столбцов
 	private Object[] columnsHeader = new String[] { "id", "тип", "Имя", "кол-во", "жанр/сфера" };
@@ -69,6 +71,21 @@ public class MainFrame extends JFrame {
 				int idx = table1.getSelectedRow();
 				// Вставка новой строки после выделенной
 				tableModel.insertRow(idx + 1, new String[] { "" + String.valueOf(table1.getRowCount()), "", "" });
+			}
+		});
+		JButton  sort= new JButton("sort");
+		sort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				Sort_l(sr);
+				if(sr==3)
+				{
+					sr=1;
+				}
+				else {
+					sr++;
+				}
+				
 			}
 		});
 		JButton save = new JButton("Сохранить");
@@ -107,6 +124,7 @@ public class MainFrame extends JFrame {
 		buttons.add(add);
 		buttons.add(save);
 		buttons.add(remove);
+		buttons.add(sort);
 		getContentPane().add(buttons, "South");
 		// Вывод окна на экран
 		setSize(400, 300);
@@ -210,6 +228,44 @@ public class MainFrame extends JFrame {
 			return "другое";
 
 		}
+	}
+	private  void Sort_l(int s) {
+		switch(s){
+		case 1:
+			usList.sort(Book.IdComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getBook_id()),
+						Class_chenge((usList.get(i).getTipe())), usList.get(i).getName(),
+						String.valueOf(usList.get(i).getCount()), usList.get(i).getGenre() };
+				tableModel.addRow(array);
+			}
+			break;
+		case 2:
+			usList.sort(Book.NameComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getBook_id()),
+						Class_chenge((usList.get(i).getTipe())), usList.get(i).getName(),
+						String.valueOf(usList.get(i).getCount()), usList.get(i).getGenre() };
+				tableModel.addRow(array);
+			}
+			break;
+		case 3:
+			usList.sort(Book.CountComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getBook_id()),
+						Class_chenge((usList.get(i).getTipe())), usList.get(i).getName(),
+						String.valueOf(usList.get(i).getCount()), usList.get(i).getGenre() };
+				tableModel.addRow(array);
+			}
+			
+			break;
+			
+			
+	}
+		
 	}
 
 	private static int R_Class_chenge(String clas) {

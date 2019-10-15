@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AdminFrame extends JFrame {
 	/**
@@ -33,8 +35,8 @@ public class AdminFrame extends JFrame {
 	private DefaultTableModel tableModel;
 	private JTable table1;
 	private NodeList nodeList;
-	private ArrayList<User> usList = new ArrayList<User>();
-
+	private  ArrayList<User> usList = new ArrayList<User>();
+	private int sr=1;
 	// Заголовки столбцов
 	private Object[] columnsHeader = new String[] { "id", "Имя","Пароль", "Админ/Библиотекарь","книги" };
 
@@ -79,6 +81,21 @@ public class AdminFrame extends JFrame {
 				}
 			}
 		});
+		JButton  sort= new JButton("sort");
+		sort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				Sort_l(sr);
+				if(sr==3)
+				{
+					sr=1;
+				}
+				else {
+					sr++;
+				}
+				
+			}
+		});
 		// Создание кнопки удаления строки таблицы
 		JButton remove = new JButton("Удалить");
 		remove.addActionListener(new ActionListener() {
@@ -103,6 +120,7 @@ public class AdminFrame extends JFrame {
 		buttons.add(add);
 		buttons.add(save);
 		buttons.add(remove);
+		buttons.add(sort);
 		getContentPane().add(buttons, "South");
 		// Вывод окна на экран
 		setSize(400, 300);
@@ -210,6 +228,38 @@ public class AdminFrame extends JFrame {
 			}
 		}
 
+	}
+	private  void Sort_l(int s) {
+		switch(s){
+		case 1:
+			usList.sort(User.IdComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getUser_id()), usList.get(i).getName(),usList.get(i).getpasword(),Class_chenge((usList.get(i).getUser_class())),usList.get(i).getBook_t_id() };
+				tableModel.addRow(array);
+			}
+			break;
+		case 2:
+			usList.sort(User.NameComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getUser_id()), usList.get(i).getName(),usList.get(i).getpasword(),Class_chenge((usList.get(i).getUser_class())),usList.get(i).getBook_t_id() };
+				tableModel.addRow(array);
+			}
+			break;
+		case 3:
+			usList.sort(User.ClassComparator);
+			tableModel.setRowCount(0);
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Object[] array = new String[] { String.valueOf(usList.get(i).getUser_id()), usList.get(i).getName(),usList.get(i).getpasword(),Class_chenge((usList.get(i).getUser_class())),usList.get(i).getBook_t_id() };
+				tableModel.addRow(array);
+			}
+			
+			break;
+			
+			
+	}
+		
 	}
 	private static int R_Class_chenge(String clas) {
 		if (clas.equals("Библиотекарь")) {
